@@ -1,23 +1,79 @@
-import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.css';
+import { useState } from 'react';
 
 export const App = () => {
+	const NUMS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
+	const [operand1, setOperand1] = useState('');
+	const [operand2, setOperand2] = useState('');
+	const [operator, setOperator] = useState('');
+	const [isResult, setIsResult] = useState(false);
+
+	const handleOperandClck = (e) => {
+		if (isResult) {
+			setIsResult(!isResult);
+			setOperand1(e.target.innerText);
+		}
+		if (!operator) {
+			setOperand1(operand1 + e.target.innerText);
+		}
+		if (operand1 && operator) {
+			setOperand2(operand2 + e.target.innerText);
+		}
+	};
+
+	const handleOperatorClick = (e) => {
+		if (operand1) {
+			setOperator(e.target.innerText);
+		}
+	};
+
+	const handleEqualsClick = () => {
+		if (operand1 && operand2 && operator === '+') {
+			setOperand1(Number(operand1) + Number(operand2));
+			setOperator('');
+			setOperand2('');
+			setIsResult(!isResult);
+		} else if (operand1 && operand2 && operator === '-') {
+			setOperand1(Number(operand1) - Number(operand2));
+			setOperator('');
+			setOperand2('');
+			setIsResult(!isResult);
+		}
+	};
+
+	const handleClearClick = () => {
+		setOperand1('');
+		setOperand2('');
+		setOperator('');
+		setIsResult(false);
+	};
+
 	return (
-		<div className="App">
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
-				<p>
-					Edit <code>src/App.js</code> and save to reload. Here we go!
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-			</header>
+		<div className={styles.app}>
+			<p className={isResult ? styles.displayResult : styles.display}>
+				{operand1} {operator} {operand2}
+			</p>
+			<ul className={styles.keyboard}>
+				{NUMS.map((num) => (
+					<li className={styles.button} key={num} onClick={handleOperandClck}>
+						{num}
+					</li>
+				))}
+				<li className={styles.button} onClick={handleOperatorClick}>
+					+
+				</li>
+				<li className={styles.button} onClick={handleOperatorClick}>
+					-
+				</li>
+				<li className={styles.button} onClick={handleEqualsClick}>
+					=
+				</li>
+				<li className={styles.button} onClick={handleClearClick}></li>
+				<li className={styles.button} onClick={handleClearClick}>
+					C
+				</li>
+			</ul>
 		</div>
 	);
 };

@@ -1,0 +1,55 @@
+.app {
+	margin: 20px auto;
+	padding: 20px 0;
+	text-align: center;
+	width: 300px;
+	background-color: grey;
+}
+
+.display {
+	margin: 0 auto;
+	padding: 0 5px;
+	width: 70%;
+	height: 40px;
+	border-radius: 10px;
+	line-height: 40px;
+	font-size: 30px;
+	text-align: right;
+	border: 3px solid blue;
+	background-color: #fff;
+}
+
+.displayResult {
+	margin: 0 auto;
+	padding: 0 5px;
+	width: 70%;
+	height: 40px;
+	border-radius: 10px;
+	line-height: 40px;
+	font-size: 30px;
+	text-align: right;
+	border: 3px solid blue;
+	background-color: #fff;
+	font-weight: bold;
+	color: darkblue;
+}
+
+.keyboard {
+	list-style-type: none;
+	margin: 20px auto 0;
+	padding: 0;
+	width: 70%;
+	display: grid;
+	grid-template-columns: 60px 60px 60px;
+	grid-template-rows: 60px 60px 60px 60px 60px;
+	gap: 15px;
+}
+
+.button {
+	line-height: 60px;
+	border: 1px solid gray;
+	border-radius: 10px;
+	font-size: 40px;
+	cursor: pointer;
+	background-color: #fff;
+}
