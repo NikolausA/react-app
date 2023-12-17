@@ -2,12 +2,22 @@ import styles from './App.module.css';
 import { useState } from 'react';
 
 export const App = () => {
-	const NUMS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+	const NUMS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '=', 'C'];
 
 	const [operand1, setOperand1] = useState('');
 	const [operand2, setOperand2] = useState('');
 	const [operator, setOperator] = useState('');
 	const [isResult, setIsResult] = useState(false);
+
+	const setHandler = (item) => {
+		if (item === '+' || item === '-') {
+			return handleOperatorClick;
+		} else if (item === 'C') {
+			return handleClearClick;
+		} else if (item === '=') {
+			return handleEqualsClick;
+		} else return handleOperandClck;
+	};
 
 	const handleOperandClck = (e) => {
 		if (isResult) {
@@ -56,23 +66,10 @@ export const App = () => {
 			</p>
 			<ul className={styles.keyboard}>
 				{NUMS.map((num) => (
-					<li className={styles.button} key={num} onClick={handleOperandClck}>
+					<li className={styles.button} key={num} onClick={setHandler(num)}>
 						{num}
 					</li>
 				))}
-				<li className={styles.button} onClick={handleOperatorClick}>
-					+
-				</li>
-				<li className={styles.button} onClick={handleOperatorClick}>
-					-
-				</li>
-				<li className={styles.button} onClick={handleEqualsClick}>
-					=
-				</li>
-				<li className={styles.button} onClick={handleClearClick}></li>
-				<li className={styles.button} onClick={handleClearClick}>
-					C
-				</li>
 			</ul>
 		</div>
 	);
