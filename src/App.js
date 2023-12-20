@@ -23,6 +23,7 @@ export const App = () => {
 		if (isResult) {
 			setIsResult(!isResult);
 			setOperand1(e.target.innerText);
+			return;
 		}
 		if (!operator) {
 			setOperand1(operand1 + e.target.innerText);
