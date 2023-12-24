@@ -1,0 +1,18 @@
+.field {
+	margin: 10px auto;
+	display: flex;
+	flex-wrap: wrap;
+	width: 180px;
+	background-color: lightblue;
+}
+
+.fieldCell {
+	box-sizing: border-box;
+	/* margin: 5px; */
+	min-width: 60px;
+	height: 60px;
+	line-height: 60px;
+	border: 1px solid lightslategray;
+	font-weight: bold;
+	color: #000;
+}
