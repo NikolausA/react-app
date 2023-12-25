@@ -14,56 +14,57 @@ export const Game = () => {
 
 	const fieldValue = currentPlayer ? 'X' : 'O';
 
-	const checkIsGameEnded = (letter) => {
-		console.log(field);
-		const matchedField = field.map((item, i) => {
+	const checkIsDraw = (arr) => {
+		return arr.every((cell) => cell);
+	};
+
+	const checkIsThereWinner = (letter, changedField) => {
+		let matchedIndexesString = '';
+		changedField.forEach((item, i) => {
 			if (item === letter) {
-				return i;
+				matchedIndexesString += String(i);
 			}
 		});
 
-		const matchedFieldToString = matchedField.join('').replaceAll(' ', '');
-		// console.log(matchedFieldToString);
-
-		winPaterns.forEach((item) => {
-			if (matchedFieldToString.includes(item)) {
-				setIsGameEnded(true);
-				console.log(true);
-			}
-		});
+		return winPaterns.some((patern) => matchedIndexesString.includes(patern));
 	};
 
 	const handleClick = (index) => {
-		const changedField = field.map((f, i) => {
-			if (i === index) {
-				return (f = fieldValue);
-			} else {
-				return f;
-			}
-		});
+		if (isDraw || isGameEnded) return;
+
+		const changedField = field.map((f, i) => (i === index ? fieldValue : f));
 		setField(changedField);
+		if (checkIsThereWinner(fieldValue, changedField)) {
+			setIsGameEnded(true);
+			return;
+		}
+
+		if (checkIsDraw(changedField)) {
+			setIsDraw(true);
+			return;
+		}
+
 		setCurrentPlayer(!currentPlayer);
-		// console.log(field);
-		// console.log(matchedField);
-		checkIsGameEnded(fieldValue);
 	};
 
+	const handleReset = () => {
+		setCurrentPlayer(true);
+		setField(initialFields);
+		setIsDraw(false);
+		setIsGameEnded(false);
+	};
+
+	const status = isGameEnded
+		? `Победил ${fieldValue}`
+		: isDraw
+			? `Ничья`
+			: `Ходит: ${fieldValue}`;
+
 	return (
-		<GameLayout>
+		<GameLayout isDraw={isDraw} isGameEnded={isGameEnded} handleReset={handleReset}>
 			Игра крестики - нолики
-			<Information
-				currentPlayer={currentPlayer}
-				isDraw={isDraw}
-				isGameEnded={isGameEnded}
-			/>
-			<Field
-				field={field}
-				setField={setField}
-				currentPlayer={currentPlayer}
-				setCurrentPlayer={setCurrentPlayer}
-				checkIsGameEnded={checkIsGameEnded}
-				handleClick={handleClick}
-			/>
+			<Information status={status} />
+			<Field field={field} handleClick={handleClick} />
 		</GameLayout>
 	);
 };

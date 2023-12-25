@@ -1,5 +1,5 @@
 import { InformationLayout } from './InformationLayout';
 
-export const Information = ({ currentPlayer }) => {
-	return <InformationLayout currentPlayer={currentPlayer} />;
+export const Information = ({ status }) => {
+	return <InformationLayout status={status} />;
 };

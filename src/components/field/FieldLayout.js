@@ -1,14 +1,7 @@
 import styles from './Field.module.css';
+import PropTypes from 'prop-types';
 
-export const FieldLayout = ({
-	field,
-	setField,
-	fieldValue,
-	currentPlayer,
-	setCurrentPlayer,
-	checkIsGameEnded,
-	handleClick,
-}) => {
+export const FieldLayout = ({ field, handleClick }) => {
 	return (
 		<div className={styles.field}>
 			{field.map((item, index) => (
@@ -23,4 +16,9 @@ export const FieldLayout = ({
 			))}
 		</div>
 	);
+};
+
+FieldLayout.propTypes = {
+	field: PropTypes.array,
+	handleClick: PropTypes.func,
 };

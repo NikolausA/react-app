@@ -6,3 +6,15 @@
 .title {
 	color: rgb(34, 0, 255);
 }
+
+.buttonActive {
+	margin: 0 auto;
+	display: block;
+	background-color: purple;
+	padding: 10px;
+	color: #fff;
+}
+
+.buttonInactive {
+	display: none;
+}
