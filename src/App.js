@@ -32,8 +32,6 @@ export const App = () => {
 					setEmailError(
 						'Введенное значение не соответствует электронной почте',
 					);
-				} else {
-					setEmailError('');
 				}
 				break;
 			case 'password':
@@ -43,15 +41,11 @@ export const App = () => {
 					setPasswordError(
 						'Пароль должен содержать не менее одной строчной, заглавной буквы, цифры и специального символа. Длина пароля от 8 до 15 символов',
 					);
-				} else {
-					setPasswordError('');
 				}
 				break;
 			case 'confirmation':
 				if (target.value !== password) {
-					setConfirmationError('Не совпадает со значение в строке пароль');
-				} else {
-					setConfirmationError('');
+					setConfirmationError('Не совпадает со значение в поле пароль');
 				}
 				break;
 			default:
@@ -119,13 +113,15 @@ export const App = () => {
 					name="confirmation"
 					placeholder="Подтверждение пароля"
 					onChange={onChange}
+					onBlur={onBlur}
+					disabled={!email || emailError || !password || passwordError}
 				/>
 				{confirmationError && (
 					<span className={styles.inputError}>{confirmationError}</span>
 				)}
 				<button
 					className={styles.buttonSubmit}
-					disabled={!!emailError || !!passwordError || !!confirmationError}
+					disabled={!confirmation || password !== confirmation}
 					type="submit"
 				>
 					Зарегистрироваться
