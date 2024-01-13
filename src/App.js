@@ -1,18 +1,51 @@
+import * as yup from 'yup';
 import { useStore } from './useStore';
 import styles from './App.module.css';
 import { useState } from 'react';
 
+const emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+const passwordPattern =
+	/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-#!$@%^&*_+~=:;?\/])[-\w#!$@%^&*+~=:;?\/]{8,15}$/;
+
+const emailBlurSchema = yup
+	.string()
+	.matches(emailPattern, 'Введенное значение не соответствует электронной почте')
+	.required('Поле должно быть заполнено');
+
+const passwordBlurSchema = yup
+	.string()
+	.matches(
+		passwordPattern,
+		'Пароль должен содержать не менее одной строчной, заглавной буквы, цифры и специального символа. Длина пароля от 8 до 15 символов',
+	)
+	.required('Поле должно быть заполнено');
+
+const confirmationBlurSchema = yup
+	.string()
+	.oneOf([yup.ref('password')], 'Не совпадает со значение в поле пароль')
+	.required('Поле должно быть заполнено');
+
+const validateAndGetErrorMessage = (schema, value) => {
+	let errorMessage = null;
+
+	try {
+		schema.validateSync(value, { abortEarly: false });
+	} catch ({ errors }) {
+		errorMessage = errors
+			.reduce((message, error) => message + error + 'n' + '')
+			.trim();
+	}
+
+	return errorMessage;
+};
+
 export const App = () => {
 	const { getState, updateState } = useStore();
-	const [emailError, setEmailError] = useState('');
-	const [passwordError, setPasswordError] = useState('');
-	const [confirmationError, setConfirmationError] = useState('');
+	const [emailError, setEmailError] = useState(null);
+	const [passwordError, setPasswordError] = useState(null);
+	const [confirmationError, setConfirmationError] = useState(null);
 
 	const { email, password, confirmation } = getState();
-
-	const emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-	const passwordPattern =
-		/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-#!$@%^&*_+~=:;?\/])[-\w#!$@%^&*+~=:;?\/]{8,15}$/;
 
 	const onSubmit = (e) => {
 		e.preventDefault();
@@ -24,29 +57,24 @@ export const App = () => {
 	};
 
 	const onBlur = ({ target }) => {
+		let newError = null;
 		switch (target.name) {
 			case 'email':
-				if (!target.value) {
-					setEmailError('Поле должно быть заполнено');
-				} else if (!emailPattern.test(target.value)) {
-					setEmailError(
-						'Введенное значение не соответствует электронной почте',
-					);
-				}
+				newError = validateAndGetErrorMessage(emailBlurSchema, target.value);
+				setEmailError(newError);
 				break;
+
 			case 'password':
-				if (!target.value) {
-					setPasswordError('Поле должно быть заполнено');
-				} else if (!passwordPattern.test(target.value)) {
-					setPasswordError(
-						'Пароль должен содержать не менее одной строчной, заглавной буквы, цифры и специального символа. Длина пароля от 8 до 15 символов',
-					);
-				}
+				newError = validateAndGetErrorMessage(passwordBlurSchema, target.value);
+				setPasswordError(newError);
 				break;
+
 			case 'confirmation':
-				if (target.value !== password) {
-					setConfirmationError('Не совпадает со значение в поле пароль');
-				}
+				newError = validateAndGetErrorMessage(
+					confirmationBlurSchema,
+					target.value,
+				);
+				setConfirmationError(newError);
 				break;
 			default:
 				break;
@@ -130,3 +158,33 @@ export const App = () => {
 		</div>
 	);
 };
+
+// const onBlur = ({ target }) => {
+//   switch (target.name) {
+//     case 'email':
+//       if (!target.value) {
+//         setEmailError('Поле должно быть заполнено');
+//       } else if (!emailPattern.test(target.value)) {
+//         setEmailError(
+//           'Введенное значение не соответствует электронной почте',
+//         );
+//       }
+//       break;
+//     case 'password':
+//       if (!target.value) {
+//         setPasswordError('Поле должно быть заполнено');
+//       } else if (!passwordPattern.test(target.value)) {
+//         setPasswordError(
+//           'Пароль должен содержать не менее одной строчной, заглавной буквы, цифры и специального символа. Длина пароля от 8 до 15 символов',
+//         );
+//       }
+//       break;
+//     case 'confirmation':
+//       if (target.value !== password) {
+//         setConfirmationError('Не совпадает со значение в поле пароль');
+//       }
+//       break;
+//     default:
+//       break;
+//   }
+// };
