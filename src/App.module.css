@@ -76,6 +76,7 @@
 }
 
 .buttonSubmit:disabled {
+	cursor: none;
 	background-color: #fff;
 	color: lightgray;
 	border: none;
