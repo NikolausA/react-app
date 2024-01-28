@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
+import {
+	useRequestAddNewTodo,
+	useRequestUpdateCompleteTodo,
+	useRequestUpdateTodo,
+	useRequestDeletetodo,
+	useRequestSearchTodo,
+} from './hooks';
 import styles from './App.module.css';
-import { EditModalWindow } from './components';
+import { EditModalWindow, SearchTodoForm } from './components';
 
 export const App = () => {
 	const [todos, setTodos] = useState([]);
@@ -19,6 +26,12 @@ export const App = () => {
 		setRrefreshProductFlag(!refreshProductFlag);
 	};
 
+	const requestAddNewTodo = useRequestAddNewTodo(newTodo, todos);
+	const requestDeleteTodo = useRequestDeletetodo(refreshProducts);
+	const requestUpdateCompleteTodo = useRequestUpdateCompleteTodo(refreshProducts);
+	const requestUpdateTodo = useRequestUpdateTodo(refreshProducts);
+	const requestSearchTodo = useRequestSearchTodo();
+
 	useEffect(() => {
 		const getAllTodos = async () => {
 			const loadedData = await fetch(`http://localhost:3004/todos${sortParam}`);
@@ -29,67 +42,10 @@ export const App = () => {
 		getAllTodos();
 	}, [refreshProductFlag, sortParam]);
 
-	const requestAddNewTask = async (text) => {
-		const newTodo = await fetch('http://localhost:3004/todos', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				userId: 1,
-				id: String(Date.now()),
-				title: text,
-				completed: false,
-			}),
-		});
-		const addedTodo = await newTodo.json();
-
-		const newTodos = [...todos, addedTodo];
-		setTodos(newTodos);
-		setSortParam('');
-	};
-
-	const requestUpdateCompleteTodo = async (id, completed) => {
-		const res = await fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({ completed: !completed }),
-		});
-		const response = await res.json();
-		refreshProducts();
-		console.log(response);
-	};
-
-	const requestUpdateTodo = async (id, text) => {
-		const res = await fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				id: id,
-				title: text,
-			}),
-		});
-
-		const response = await res.json();
-		refreshProducts();
-		console.log(response);
-	};
-
-	const requestDeleteTodo = async (id) => {
-		try {
-			const res = await fetch(`http://localhost:3004/todos/${id}`, {
-				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			});
-
-			const deletedTodo = await res.json();
-			refreshProducts();
-		} catch (error) {
-			console.log('Error: ', error);
-		}
-	};
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		requestAddNewTask(newTodo);
+		requestAddNewTodo().then((newTodos) => setTodos(newTodos));
+		setSortParam('');
 		setNewTodo('');
 	};
 
@@ -99,16 +55,6 @@ export const App = () => {
 
 	const getEditedTodo = (id) => {
 		return todos.find((item) => item.id === id);
-	};
-
-	const handleModalOpen = (id) => {
-		const editedTodo = getEditedTodo(id);
-		setSelectedTodo(editedTodo);
-		setIsModal(true);
-	};
-
-	const handleModalClose = () => {
-		setIsModal(false);
 	};
 
 	const handleDelete = (id) => {
@@ -121,6 +67,16 @@ export const App = () => {
 
 	const handleSortButton = () => {
 		setSortParam('?_sort=title');
+	};
+
+	const handleModalOpen = (id) => {
+		const editedTodo = getEditedTodo(id);
+		setSelectedTodo(editedTodo);
+		setIsModal(true);
+	};
+
+	const handleModalClose = () => {
+		setIsModal(false);
 	};
 
 	return (
@@ -144,6 +100,11 @@ export const App = () => {
 					Добавить задачу
 				</button>
 			</form>
+			<SearchTodoForm
+				todos={todos}
+				setTodos={setTodos}
+				requestSearchTodo={requestSearchTodo}
+			/>
 			<h1 className={styles.title}>Todo List (Список задач)</h1>
 			<div className={styles.titleLine}>
 				<div>#</div>

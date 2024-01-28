@@ -3,25 +3,13 @@
     {
       "id": "1706210179003",
       "userId": 1,
-      "title": "новая задача",
+      "title": "новая задача #2",
       "completed": false
     },
     {
       "id": "1706210440744",
       "userId": 1,
       "title": "задача 2355",
-      "completed": true
-    },
-    {
-      "id": "1706301678745",
-      "userId": 1,
-      "title": "todo #1",
-      "completed": false
-    },
-    {
-      "id": "1706380814942",
-      "userId": 1,
-      "title": "test",
       "completed": true
     },
     {
@@ -34,6 +22,12 @@
       "id": "1706384757041",
       "userId": 1,
       "title": "главная задача",
+      "completed": false
+    },
+    {
+      "id": "1706466829240",
+      "userId": 1,
+      "title": "a todo",
       "completed": false
     }
   ]

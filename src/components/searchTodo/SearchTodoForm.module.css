@@ -1,0 +1,36 @@
+.searchForm {
+	display: flex;
+	justify-content: center;
+	margin: 20px 0;
+	column-gap: 20px;
+}
+
+.searchInput {
+	width: 200px;
+	outline: none;
+	border: none;
+	padding: 5px;
+	border-bottom: 1px solid gray;
+}
+
+.searchInput:focus {
+	border-bottom: 2px solid lightblue;
+}
+
+.searchSubmitBtn {
+	background-color: rgb(119, 152, 228);
+	color: #fff;
+	padding: 7px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.searchResetBtn {
+	background-color: rgb(119, 152, 228);
+	color: #fff;
+	padding: 7px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
