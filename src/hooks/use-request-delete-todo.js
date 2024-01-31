@@ -1,17 +1,12 @@
-export const useRequestDeletetodo = (refreshProducts) => {
-	const requestDeleteTodo = async (id) => {
-		try {
-			const res = await fetch(`http://localhost:3004/todos/${id}`, {
-				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			});
+import { ref, remove } from 'firebase/database';
+import { db } from '../firebase';
 
-			const deletedTodo = await res.json();
-			console.log(deletedTodo);
-			refreshProducts();
-		} catch (error) {
-			console.log('Error: ', error);
-		}
+export const useRequestDeletetodo = () => {
+	const requestDeleteTodo = (id) => {
+		const todoDbRef = ref(db, 'todos/' + id);
+		remove(todoDbRef).then((response) => {
+			console.log(response);
+		});
 	};
 
 	return requestDeleteTodo;

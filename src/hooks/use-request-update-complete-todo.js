@@ -1,13 +1,14 @@
-export const useRequestUpdateCompleteTodo = (refreshProducts) => {
-	const requestUpdateCompleteTodo = async (id, completed) => {
-		const res = await fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({ completed: !completed }),
+import { ref, update } from 'firebase/database';
+import { db } from '../firebase';
+
+export const useRequestUpdateCompleteTodo = () => {
+	const requestUpdateCompleteTodo = (id, completed) => {
+		const todoDbRef = ref(db, 'todos/' + id);
+		update(todoDbRef, {
+			completed: !completed,
+		}).then((response) => {
+			console.log(response);
 		});
-		const response = await res.json();
-		refreshProducts();
-		console.log(response);
 	};
 
 	return requestUpdateCompleteTodo;

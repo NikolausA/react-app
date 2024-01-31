@@ -1,17 +1,15 @@
-export const useRequestUpdateTodo = (refreshProducts) => {
-	const requestUpdateTodo = async (id, text) => {
-		const res = await fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				id: id,
-				title: text,
-			}),
-		});
+import { ref, set } from 'firebase/database';
+import { db } from '../firebase';
 
-		const response = await res.json();
-		refreshProducts();
-		console.log(response);
+export const useRequestUpdateTodo = () => {
+	const requestUpdateTodo = (id, text) => {
+		const todoDbRef = ref(db, 'todos/' + id);
+		set(todoDbRef, {
+			completed: false,
+			title: text,
+		}).then((response) => {
+			console.log(response);
+		});
 	};
 
 	return requestUpdateTodo;

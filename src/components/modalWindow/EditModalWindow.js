@@ -7,21 +7,21 @@ export const EditModalWindow = ({
 	onClose,
 	requestUpdateTodo,
 }) => {
-	const [editedTodo, setEditedTodo] = useState('');
+	const [editedTodoTitle, setEditedTodoTitle] = useState('');
 
-	const { id, title } = selectedTodo;
+	const [id, todo] = selectedTodo;
 
 	useEffect(() => {
-		setEditedTodo(title);
-	}, [title]);
+		setEditedTodoTitle(todo.title);
+	}, [todo.title]);
 
 	const onChange = ({ target }) => {
-		setEditedTodo(target.value);
+		setEditedTodoTitle(target.value);
 	};
 
 	const handleModalFormSubmit = (e) => {
 		e.preventDefault();
-		requestUpdateTodo(id, editedTodo);
+		requestUpdateTodo(id, editedTodoTitle);
 		onClose();
 	};
 
@@ -45,7 +45,7 @@ export const EditModalWindow = ({
 						<input
 							className={styles.modalInput}
 							type="text"
-							value={editedTodo}
+							value={editedTodoTitle}
 							onChange={onChange}
 							autoFocus
 						/>

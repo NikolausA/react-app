@@ -8,53 +8,46 @@ import {
 } from './hooks';
 import styles from './App.module.css';
 import { EditModalWindow, SearchTodoForm } from './components';
+import { ref, onValue, query, orderByChild, orderByValue } from 'firebase/database';
+import { db } from './firebase';
 
 export const App = () => {
 	const [todos, setTodos] = useState([]);
+	const [sortedTodos, setSortedTodos] = useState([]);
 	const [newTodo, setNewTodo] = useState('');
 	const [isModal, setIsModal] = useState(false);
-	const [sortParam, setSortParam] = useState('');
-	const [refreshProductFlag, setRrefreshProductFlag] = useState(false);
-	const [selectedTodo, setSelectedTodo] = useState({
-		userId: 1,
-		id: 1,
-		title: '',
-		completed: false,
-	});
+	const [isSorted, setIsSorted] = useState(false);
+	const [selectedTodo, setSelectedTodo] = useState([
+		'1',
+		{ completed: false, title: '' },
+	]);
 
-	const refreshProducts = () => {
-		setRrefreshProductFlag(!refreshProductFlag);
-	};
-
-	const requestAddNewTodo = useRequestAddNewTodo(newTodo, todos);
-	const requestDeleteTodo = useRequestDeletetodo(refreshProducts);
-	const requestUpdateCompleteTodo = useRequestUpdateCompleteTodo(refreshProducts);
-	const requestUpdateTodo = useRequestUpdateTodo(refreshProducts);
+	const requestAddNewTodo = useRequestAddNewTodo();
+	const requestDeleteTodo = useRequestDeletetodo();
+	const requestUpdateCompleteTodo = useRequestUpdateCompleteTodo();
+	const requestUpdateTodo = useRequestUpdateTodo();
 	const requestSearchTodo = useRequestSearchTodo();
 
 	useEffect(() => {
-		const getAllTodos = async () => {
-			const loadedData = await fetch(`http://localhost:3004/todos${sortParam}`);
-			const loadedTodos = await loadedData.json();
-			setTodos(loadedTodos);
-		};
-
-		getAllTodos();
-	}, [refreshProductFlag, sortParam]);
+		if (isSorted) {
+			setSortedTodos(sortedTodos);
+		} else {
+			const todosDbRef = ref(db, 'todos');
+			return onValue(todosDbRef, (snapshot) => {
+				const loadedTodos = Object.entries(snapshot.val());
+				setTodos(loadedTodos);
+			});
+		}
+	}, []);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		requestAddNewTodo().then((newTodos) => setTodos(newTodos));
-		setSortParam('');
+		requestAddNewTodo(newTodo);
 		setNewTodo('');
 	};
 
 	const onChange = ({ target }) => {
 		setNewTodo(target.value);
-	};
-
-	const getEditedTodo = (id) => {
-		return todos.find((item) => item.id === id);
 	};
 
 	const handleDelete = (id) => {
@@ -66,7 +59,13 @@ export const App = () => {
 	};
 
 	const handleSortButton = () => {
-		setSortParam('?_sort=title');
+		const todosSorted = todos.sort((a, b) => (a[1].title > b[1].title ? 1 : -1));
+		setSortedTodos(todosSorted);
+		setIsSorted(true);
+	};
+
+	const getEditedTodo = (id) => {
+		return todos.find((item) => item[0] === id);
 	};
 
 	const handleModalOpen = (id) => {
@@ -112,26 +111,25 @@ export const App = () => {
 				<button className={styles.sort} onClick={handleSortButton} />
 			</div>
 			<div className={styles.todosWrapper}>
-				{todos.length > 0 &&
-					todos.map(({ id, title, completed }, index) => (
-						<div key={id} className={styles.item}>
-							<span>{index + 1}. </span>
-							<input
-								type="checkbox"
-								value={completed}
-								onClick={() => handleCheckboxClick(id, completed)}
-							/>
-							<p className={styles.itemText}>{title}</p>
-							<button
-								className={`${styles.todoBtn} ${styles.edit}`}
-								onClick={() => handleModalOpen(id)}
-							/>
-							<button
-								className={`${styles.todoBtn} ${styles.delete}`}
-								onClick={() => handleDelete(id)}
-							/>
-						</div>
-					))}
+				{todos.map(([id, { completed, title }], index) => (
+					<div key={id} className={styles.item}>
+						<span>{index + 1}. </span>
+						<input
+							type="checkbox"
+							value={completed}
+							onClick={() => handleCheckboxClick(id, completed)}
+						/>
+						<p className={styles.itemText}>{title}</p>
+						<button
+							className={`${styles.todoBtn} ${styles.edit}`}
+							onClick={() => handleModalOpen(id)}
+						/>
+						<button
+							className={`${styles.todoBtn} ${styles.delete}`}
+							onClick={() => handleDelete(id)}
+						/>
+					</div>
+				))}
 			</div>
 		</div>
 	);

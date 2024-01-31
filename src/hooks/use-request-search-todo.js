@@ -1,7 +1,6 @@
 export const useRequestSearchTodo = () => {
 	const requestSearchTodo = (text, todos) => {
-		let filteredTodos = todos.filter((todo) => todo.title.includes(text));
-		return filteredTodos;
+		return todos.filter((item) => item[1].title.includes(text));
 	};
 
 	return requestSearchTodo;

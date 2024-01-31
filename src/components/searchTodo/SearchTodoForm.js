@@ -3,7 +3,6 @@ import styles from './SearchTodoForm.module.css';
 
 export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
 	const [searchTodo, setSearchTodo] = useState('');
-	const [reset, setReset] = useState(false);
 
 	const onChange = ({ target }) => {
 		setSearchTodo(target.value);
@@ -16,7 +15,6 @@ export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
 	const onSearchReset = () => {
 		setSearchTodo('');
 		setTodos(todos);
-		setReset(true);
 	};
 	return (
 		<div>
