@@ -1,4 +1,5 @@
-import { EditModalWindow } from './modalWindow/EditModalWindow';
-import { SearchTodoForm } from './searchTodo/SearchTodoForm';
-
-export { EditModalWindow, SearchTodoForm };
+export * from './todosList/todosList';
+export * from './todoItem/todoItem';
+export * from './modalWindow/EditModalWindow';
+export * from './searchTodo/SearchTodoForm';
+export * from './notFound/NotFound';

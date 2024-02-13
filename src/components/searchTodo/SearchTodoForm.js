@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import styles from './SearchTodoForm.module.css';
+import { filterTodos } from '../../utils/filter-todos';
 
-export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
-	const [searchTodo, setSearchTodo] = useState('');
-	const [reset, setReset] = useState(false);
+export const SearchTodoForm = ({ todos, onSetTodos, isReset, setIsReset }) => {
+	const [searchInputValue, setSearchInputValue] = useState('');
 
 	const onChange = ({ target }) => {
-		setSearchTodo(target.value);
+		setSearchInputValue(target.value);
 	};
 
-	const onSearchSubmit = () => {
-		setTodos(requestSearchTodo(searchTodo, todos));
+	const onSearchSubmit = (e) => {
+		e.preventDefault();
+		onSetTodos(filterTodos(searchInputValue, todos));
 	};
 
 	const onSearchReset = () => {
-		setSearchTodo('');
-		setTodos(todos);
-		setReset(true);
+		setSearchInputValue('');
+		setIsReset(!isReset);
 	};
 	return (
 		<div>
@@ -24,8 +24,9 @@ export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
 				<input
 					className={styles.searchInput}
 					type="text"
-					value={searchTodo}
+					value={searchInputValue}
 					onChange={onChange}
+					placeholder="Поиск..."
 				/>
 				<button className={styles.searchSubmitBtn} type="submit">
 					Найти
