@@ -1,32 +1,27 @@
-import { useState } from 'react';
+import { useRef, useContext } from 'react';
+import { AppContext } from '../../context';
 import styles from './SearchTodoForm.module.css';
+import { filterTodos } from '../../utils/filter.todos';
 
-export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
-	const [searchTodo, setSearchTodo] = useState('');
-	const [reset, setReset] = useState(false);
+export const SearchTodoForm = ({ isReset, setIsReset }) => {
+	const { todos, dispatch } = useContext(AppContext);
+	const searchingText = useRef();
 
-	const onChange = ({ target }) => {
-		setSearchTodo(target.value);
-	};
-
-	const onSearchSubmit = () => {
-		setTodos(requestSearchTodo(searchTodo, todos));
+	const onSearchSubmit = (e) => {
+		e.preventDefault();
+		dispatch({
+			type: 'SET_TODOS',
+			payload: filterTodos(searchingText.current.value, todos),
+		});
 	};
 
 	const onSearchReset = () => {
-		setSearchTodo('');
-		setTodos(todos);
-		setReset(true);
+		setIsReset(!isReset);
 	};
 	return (
 		<div>
 			<form className={styles.searchForm} action="#" onSubmit={onSearchSubmit}>
-				<input
-					className={styles.searchInput}
-					type="text"
-					value={searchTodo}
-					onChange={onChange}
-				/>
+				<input className={styles.searchInput} type="text" ref={searchingText} />
 				<button className={styles.searchSubmitBtn} type="submit">
 					Найти
 				</button>

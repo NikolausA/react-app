@@ -1,33 +1,23 @@
 {
   "todos": [
     {
-      "id": "1706210179003",
-      "userId": 1,
-      "title": "новая задача #2",
-      "completed": false
+      "title": "first task #1",
+      "completed": false,
+      "id": "1706210179003"
     },
     {
-      "id": "1706210440744",
-      "userId": 1,
-      "title": "задача 2355",
-      "completed": true
+      "title": "second task",
+      "completed": false,
+      "id": "1706384541713"
     },
     {
-      "id": "1706384541713",
-      "userId": 1,
-      "title": "задача",
-      "completed": false
+      "title": "third task",
+      "completed": false,
+      "id": "91af"
     },
     {
-      "id": "1706384757041",
-      "userId": 1,
-      "title": "главная задача",
-      "completed": false
-    },
-    {
-      "id": "1706466829240",
-      "userId": 1,
-      "title": "a todo",
+      "id": "894a",
+      "title": "friday task",
       "completed": false
     }
   ]

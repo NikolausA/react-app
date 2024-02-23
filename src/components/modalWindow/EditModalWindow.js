@@ -1,27 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useRef } from 'react';
 import styles from './EditModalWindow.module.css';
 
-export const EditModalWindow = ({
-	isModal,
-	selectedTodo,
-	onClose,
-	requestUpdateTodo,
-}) => {
-	const [editedTodo, setEditedTodo] = useState('');
+export const EditModalWindow = ({ isModal, selectedTodo, onSave, onClose }) => {
+	let { id, title, completed } = selectedTodo;
 
-	const { id, title } = selectedTodo;
-
-	useEffect(() => {
-		setEditedTodo(title);
-	}, [title]);
-
-	const onChange = ({ target }) => {
-		setEditedTodo(target.value);
-	};
+	const inputTitle = useRef();
+	const inputCompleted = useRef();
 
 	const handleModalFormSubmit = (e) => {
 		e.preventDefault();
-		requestUpdateTodo(id, editedTodo);
+		onSave({
+			id,
+			title: inputTitle.current.value,
+			completed: inputCompleted.current.checked,
+		});
 		onClose();
 	};
 
@@ -43,10 +35,15 @@ export const EditModalWindow = ({
 						onSubmit={handleModalFormSubmit}
 					>
 						<input
+							type="checkbox"
+							defaultChecked={completed}
+							ref={inputCompleted}
+						/>
+						<input
 							className={styles.modalInput}
 							type="text"
-							value={editedTodo}
-							onChange={onChange}
+							ref={inputTitle}
+							defaultValue={title}
 							autoFocus
 						/>
 						<button className={styles.addTodoModalBtn} type="submit">
