@@ -1,16 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameLayout } from './GameLayout';
 import { Information } from '../information/Information';
 import { Field } from '../field/Field';
+// import { Field, Information, GameLayout } from '../../components';
+import { setFieldValue } from '../../utils';
+import { winPaterns, initialFields } from '../../constants';
+import { store } from '../../store';
+import { updateField, setDraw, setGameOver, changeCurrentPlayer } from '../../actions';
 
 export const Game = () => {
-	const initialFields = ['', '', '', '', '', '', '', '', ''];
-	const winPaterns = ['012', '345', '678', '036', '147', '258', '246', '048'];
+	const { field, currentPlayer, isDraw, isGameEnded } = store.getState();
+	const [arrayFieldValues, setArrayFieldValues] = useState([]);
 
-	const [currentPlayer, setCurrentPlayer] = useState(true);
-	const [isDraw, setIsDraw] = useState(false);
-	const [isGameEnded, setIsGameEnded] = useState(false);
-	const [field, setField] = useState(initialFields);
+	useEffect(() => {
+		setArrayFieldValues(store.getState().field.filter((item) => item != ''));
+
+		const unsubscribe = store.subscribe(() => {
+			setArrayFieldValues(store.getState().field.filter((item) => item != ''));
+		});
+
+		return unsubscribe;
+	}, []);
 
 	const fieldValue = currentPlayer ? 'X' : 'O';
 
@@ -32,26 +42,24 @@ export const Game = () => {
 	const handleClick = (index) => {
 		if (isDraw || isGameEnded) return;
 
-		const changedField = field.map((f, i) => (i === index ? fieldValue : f));
-		setField(changedField);
+		const changedField = setFieldValue(field, fieldValue, index);
+
+		store.dispatch(updateField(changedField));
 		if (checkIsThereWinner(fieldValue, changedField)) {
-			setIsGameEnded(true);
+			store.dispatch(setGameOver());
 			return;
 		}
 
 		if (checkIsDraw(changedField)) {
-			setIsDraw(true);
+			store.dispatch(setDraw());
 			return;
 		}
 
-		setCurrentPlayer(!currentPlayer);
+		store.dispatch(changeCurrentPlayer());
 	};
 
 	const handleReset = () => {
-		setCurrentPlayer(true);
-		setField(initialFields);
-		setIsDraw(false);
-		setIsGameEnded(false);
+		store.dispatch({ type: 'RESET' });
 	};
 
 	const status = isGameEnded
@@ -61,10 +69,10 @@ export const Game = () => {
 			: `Ходит: ${fieldValue}`;
 
 	return (
-		<GameLayout isDraw={isDraw} isGameEnded={isGameEnded} handleReset={handleReset}>
+		<GameLayout handleReset={handleReset}>
 			Игра крестики - нолики
 			<Information status={status} />
-			<Field field={field} handleClick={handleClick} />
+			<Field handleClick={handleClick} />
 		</GameLayout>
 	);
 };
