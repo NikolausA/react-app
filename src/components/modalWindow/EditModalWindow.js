@@ -1,28 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './EditModalWindow.module.css';
+import { selectIsModal, selectSelectedTodo } from '../../selectors';
+import { setModalFalse, updateTodos } from '../../actions';
 
-export const EditModalWindow = ({
-	isModal,
-	selectedTodo,
-	onClose,
-	requestUpdateTodo,
-}) => {
-	const [editedTodo, setEditedTodo] = useState('');
-
-	const { id, title } = selectedTodo;
-
-	useEffect(() => {
-		setEditedTodo(title);
-	}, [title]);
-
-	const onChange = ({ target }) => {
-		setEditedTodo(target.value);
-	};
+export const EditModalWindow = () => {
+	const inputTitle = useRef();
+	const inputCompleted = useRef();
+	const dispatch = useDispatch();
+	const isModal = useSelector(selectIsModal);
+	const { id, title, completed } = useSelector(selectSelectedTodo);
 
 	const handleModalFormSubmit = (e) => {
 		e.preventDefault();
-		requestUpdateTodo(id, editedTodo);
+		dispatch(
+			updateTodos({
+				id: id,
+				title: inputTitle.current.value,
+				completed: inputCompleted.current.checked,
+			}),
+		);
 		onClose();
+	};
+
+	const onClose = () => {
+		dispatch(setModalFalse);
 	};
 
 	if (!isModal) return null;
@@ -43,10 +45,15 @@ export const EditModalWindow = ({
 						onSubmit={handleModalFormSubmit}
 					>
 						<input
+							type="checkbox"
+							defaultChecked={completed}
+							ref={inputCompleted}
+						/>
+						<input
 							className={styles.modalInput}
 							type="text"
-							value={editedTodo}
-							onChange={onChange}
+							defaultValue={title}
+							ref={inputTitle}
 							autoFocus
 						/>
 						<button className={styles.addTodoModalBtn} type="submit">

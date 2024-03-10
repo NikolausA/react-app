@@ -1,16 +1,14 @@
 {
   "todos": [
     {
-      "id": "1706210179003",
-      "userId": 1,
-      "title": "новая задача #2",
-      "completed": false
+      "title": "новая задача #1",
+      "completed": true,
+      "id": "1706210179003"
     },
     {
-      "id": "1706210440744",
-      "userId": 1,
-      "title": "задача 2355",
-      "completed": true
+      "title": "задача 2",
+      "completed": true,
+      "id": "1706210440744"
     },
     {
       "id": "1706384541713",
@@ -28,6 +26,11 @@
       "id": "1706466829240",
       "userId": 1,
       "title": "a todo",
+      "completed": false
+    },
+    {
+      "id": "d2ad",
+      "title": "complete redux",
       "completed": false
     }
   ]

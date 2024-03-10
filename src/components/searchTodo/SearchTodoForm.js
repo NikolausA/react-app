@@ -1,32 +1,25 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import styles from './SearchTodoForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIsAlphabetSorting } from '../../selectors';
+import { getTodos, setFilteredTodos } from '../../actions';
 
-export const SearchTodoForm = ({ todos, setTodos, requestSearchTodo }) => {
-	const [searchTodo, setSearchTodo] = useState('');
-	const [reset, setReset] = useState(false);
+export const SearchTodoForm = () => {
+	const isAlphabetSorting = useSelector(selectIsAlphabetSorting);
+	const dispatch = useDispatch();
+	const searchingText = useRef();
 
-	const onChange = ({ target }) => {
-		setSearchTodo(target.value);
-	};
-
-	const onSearchSubmit = () => {
-		setTodos(requestSearchTodo(searchTodo, todos));
+	const onSearchSubmit = (e) => {
+		dispatch(setFilteredTodos(searchingText.current.value));
 	};
 
 	const onSearchReset = () => {
-		setSearchTodo('');
-		setTodos(todos);
-		setReset(true);
+		dispatch(getTodos(isAlphabetSorting));
 	};
 	return (
 		<div>
 			<form className={styles.searchForm} action="#" onSubmit={onSearchSubmit}>
-				<input
-					className={styles.searchInput}
-					type="text"
-					value={searchTodo}
-					onChange={onChange}
-				/>
+				<input className={styles.searchInput} type="text" ref={searchingText} />
 				<button className={styles.searchSubmitBtn} type="submit">
 					Найти
 				</button>
