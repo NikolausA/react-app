@@ -1,29 +1,28 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { GameLayout } from './GameLayout';
-import { Information } from '../information/Information';
-import { Field } from '../field/Field';
-// import { Field, Information, GameLayout } from '../../components';
+import { connect } from 'react-redux';
+import { Component } from 'react';
+import { Field, Information, GameLayout } from '../../components';
 import { setFieldValue, checkIsDraw, checkIsThereWinner } from '../../utils';
 import { winPaterns } from '../../constants';
-import { store } from '../../store';
-import { updateField, setDraw, setGameOver, changeCurrentPlayer } from '../../actions';
 import {
-	selectCurrentPlayer,
-	selectField,
-	selectIsDraw,
-	selectIsGameEnded,
-} from '../../selectors';
+	updateField,
+	setDraw,
+	setGameOver,
+	changeCurrentPlayer,
+	setReset,
+} from '../../actions';
 
-export const Game = () => {
-	const field = useSelector(selectField);
-	const currentPlayer = useSelector(selectCurrentPlayer);
-	const isDraw = useSelector(selectIsDraw);
-	const isGameEnded = useSelector(selectIsGameEnded);
-	const dispatch = useDispatch();
+class GameContainer extends Component {
+	constructor(props) {
+		super(props);
 
-	const fieldValue = currentPlayer ? 'X' : 'O';
+		this.handleClick = this.handleClick.bind(this);
+		this.handleReset = this.handleReset.bind(this);
+	}
 
-	const handleClick = (index) => {
+	handleClick(index) {
+		const { field, currentPlayer, isDraw, isGameEnded, dispatch } = this.props;
+		const fieldValue = currentPlayer ? 'X' : 'O';
+
 		if (isDraw || isGameEnded) return;
 
 		const changedField = setFieldValue(field, fieldValue, index);
@@ -40,17 +39,29 @@ export const Game = () => {
 		}
 
 		dispatch(changeCurrentPlayer());
-	};
+	}
 
-	const handleReset = () => {
-		dispatch({ type: 'RESET' });
-	};
+	handleReset() {
+		const { dispatch } = this.props;
+		dispatch(setReset);
+	}
 
-	return (
-		<GameLayout handleReset={handleReset}>
-			Игра крестики - нолики
-			<Information />
-			<Field handleClick={handleClick} />
-		</GameLayout>
-	);
-};
+	render() {
+		return (
+			<GameLayout handleReset={this.handleReset}>
+				Игра крестики - нолики
+				<Information />
+				<Field handleClick={this.handleClick} />
+			</GameLayout>
+		);
+	}
+}
+
+const mapStateToProps = (state) => ({
+	field: state.field,
+	currentPlayer: state.currentPlayer,
+	isDraw: state.isDraw,
+	isGameEnded: state.isGameEnded,
+});
+
+export const Game = connect(mapStateToProps)(GameContainer);
